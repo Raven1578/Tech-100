@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>WakeGuard Wireframe</title>
+  <style>
+    body {
+      background: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+    }
+    .phone-frame {
+      width: 375px;
+      height: 700px;
+      background: white;
+      border: 12px solid black;
+      border-radius: 40px;
+      position: relative;
+      box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .screen {
+      display: none;
+      padding: 20px;
+      height: 100%;
+      overflow-y: auto;
+      text-align: center;
+    }
+    .active {
+      display: block;
+    }
+    h1 {
+      font-size: 22px;
+      margin-top: 10px;
+    }
+    .logo {
+      width: 120px;
+      margin: 10px auto;
+      display: block;
+    }
+    .profile {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #aaa;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+    }
+    button {
+      display: block;
+      margin: 15px auto;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #ddd;
+      border: none;
+      border-radius: 10px;
+      width: 80%;
+    }
+    button:hover {
+      background: #bbb;
+    }
+    .alarm {
+      background: #ff4d4d;
+      color: white;
+    }
+    .slider-container {
+      margin: 20px;
+      text-align: left;
+    }
+    input[type=range] {
+      width: 100%;
+    }
+    ul {
+    list-style-type: none;
+    padding-left: 0;
+    text-align: left;
+    display: inline-block;
+    }
+
+    .dark-mode {
+      background: #1e1e1e !important;
+      color: #f0f0f0 !important;
+    }
+    .dark-mode button {
+      background: #444 !important;
+      color: #f0f0f0 !important;
+    }
+    .dark-mode button:hover {
+      background: #666 !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="phone-frame" id="app">
+  <div class="profile" title="User Profile" onclick="showScreen('profile')">👤</div>
+
+  <div id="home" class="screen active">
+    <img src="logo-placeholder.png" alt="WakeGuard Logo" class="logo">
+    <h1>WakeGuard</h1>
+    <p>Real-Time Eye-Based Sleep Detection</p>
+    <button onclick="showScreen('monitor')">Start Monitoring</button>
+    <button onclick="showScreen('settings')">Settings</button>
+    <button onclick="showScreen('help')">Help</button>
+  </div>
+
+  <div id="monitor" class="screen">
+    <h1>Monitoring</h1>
+    <div style="height:200px;background:#ccc;display:flex;align-items:center;justify-content:center;">
+      Webcam Feed Placeholder
+    </div>
+    <p>Status: <strong id="status" style="color:green;">Eyes Open</strong></p>
+    <p>Session Time: <span id="timer">0</span> sec</p>
+    <button onclick="startTimer()">▶ Start</button>
+    <button onclick="stopTimer()">⏹ Stop</button>
+    <button onclick="simulateEyesClosed()">Simulate Eyes Closed</button>
+    <button onclick="showScreen('home')">Stop Monitoring</button>
+  </div>
+
+    <div id="alarm" class="screen alarm">
+        <h1>Wake Up!</h1>
+        <p>Eyes detected closed too long!</p>
+        <button>🔔 Alarm Sound</button>
+        <button onclick="resumeMonitoring()">Resume Monitoring</button>
+    </div>
+
+  <div id="settings" class="screen">
+    <h1>Settings</h1>
+    <div class="slider-container">
+      <label for="closure">Eye Closure Time (sec): <span id="closureValue">2</span></label>
+      <input type="range" id="closure" min="1" max="5" value="2" 
+             oninput="document.getElementById('closureValue').innerText=this.value">
+    </div>
+    <div class="slider-container">
+      <label for="volume">Volume: <span id="volumeValue">50</span>%</label>
+      <input type="range" id="volume" min="0" max="100" value="50" 
+             oninput="document.getElementById('volumeValue').innerText=this.value">
+    </div>
+    <button>🔔 Select Alarm Sound</button>
+    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    <button onclick="showScreen('home')">Back to Home</button>
+  </div>
+
+  <div id="profile" class="screen">
+    <h1>User Profile</h1>
+    <p><strong>Name:</strong> Raven Juan</p>
+    <p><strong>Email:</strong> ravenjuan@email.com</p>
+    <div id="premiumSection">
+      <p><strong>Premium Feature:</strong> Locked</p>
+      <button onclick="unlockPremium()">⭐ Unlock Premium</button>
+    </div>
+    <div id="premiumContent" style="display:none;">
+      <h2>Premium Session Analytics</h2>
+      <ul id="sessionLog">
+        <li>No records yet.</li>
+      </ul>
+      <p><strong>Total Time:</strong> <span id="totalTime">0</span> sec</p>
+      <p><strong>Longest Eye Closure:</strong> <span id="longestClosure">0</span> sec</p>
+      <p><strong>Eye Closure Events:</strong> <span id="closureCount">0</span></p>
+    </div>
+    <button onclick="showScreen('home')">Back to Home</button>
+  </div>
+
+
+  <div id="help" class="screen">
+    <h1>Help</h1>
+    <p>How to use WakeGuard:</p>
+    <ul>
+      <li>Click Start Monitoring to begin.</li>
+      <li>Ensure good lighting for best results.</li>
+      <li>Adjust settings for custom alerts.</li>
+      <li>Unlock Premium in Profile for analytics.</li>
+    </ul>
+    <button onclick="showScreen('home')">Back to Home</button>
+  </div>
+</div>
+
+<script>
+  let timerInterval;
+  let seconds = 0;
+  let premiumUnlocked = false;
+  let sessionRecords = [];
+  let closureCount = 0;
+  let longestClosure = 0;
+  let closureStart = null;
+
+  function showScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(div => {
+      div.classList.remove('active');
+    });
+    document.getElementById(screenId).classList.add('active');
+    if (screenId === 'profile') updateSessionLog();
+  }
+
+  function toggleDarkMode() {
+    document.getElementById('app').classList.toggle('dark-mode');
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    seconds = 0;
+    closureCount = 0;
+    longestClosure = 0;
+    sessionRecords = [];
+    document.getElementById('timer').innerText = seconds;
+    timerInterval = setInterval(() => {
+      seconds++;
+      document.getElementById('timer').innerText = seconds;
+    }, 1000);
+  }
+
+  function stopTimer() {
+    clearInterval(timerInterval);
+  }
+
+  function simulateEyesClosed() {
+    document.getElementById('status').innerText = "Eyes Closed";
+    document.getElementById('status').style.color = "red";
+    showScreen('alarm');
+
+    if (premiumUnlocked) {
+      closureCount++;
+      const closureDuration = Math.floor(Math.random() * 5) + 1; 
+      if (closureDuration > longestClosure) longestClosure = closureDuration;
+      const time = new Date().toLocaleTimeString();
+      sessionRecords.push("Eyes closed (" + closureDuration + " sec) at " + time);
+    }
+  }
+
+  function unlockPremium() {
+    premiumUnlocked = true;
+    document.getElementById('premiumSection').style.display = "none";
+    document.getElementById('premiumContent').style.display = "block";
+    updateSessionLog();
+  }
+
+  function updateSessionLog() {
+    const log = document.getElementById('sessionLog');
+    log.innerHTML = "";
+    if (premiumUnlocked && sessionRecords.length > 0) {
+      sessionRecords.forEach(record => {
+        const li = document.createElement('li');
+        li.innerText = record;
+        log.appendChild(li);
+      });
+    } else if (premiumUnlocked) {
+      log.innerHTML = "<li>No session records yet.</li>";
+    } else {
+      log.innerHTML = "<li>Premium not unlocked.</li>";
+    }
+
+    
+    document.getElementById('totalTime').innerText = seconds;
+    document.getElementById('longestClosure').innerText = longestClosure;
+    document.getElementById('closureCount').innerText = closureCount;
+  }
+
+  function resumeMonitoring() {
+  showScreen('monitor');
+  document.getElementById('status').innerText = "Eyes Open";
+  document.getElementById('status').style.color = "green";
+}
+</script>
+
+</body>
+</html>
