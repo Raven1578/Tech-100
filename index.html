@@ -126,6 +126,7 @@
     <button onclick="stopTimer()">⏹ Stop</button>
     <button onclick="simulateEyesClosed()">Simulate Eyes Closed</button>
     <button onclick="showScreen('home')">Stop Monitoring</button>
+    <audio id="alarmSound" src="alarm.mp3" preload="auto" loop></audio>
   </div>
 
     <div id="alarm" class="screen alarm">
@@ -271,6 +272,35 @@
   document.getElementById('status').innerText = "Eyes Open";
   document.getElementById('status').style.color = "green";
 }
+function simulateEyesClosed() {
+  document.getElementById('status').innerText = "Eyes Closed";
+  document.getElementById('status').style.color = "red";
+  showScreen('alarm');
+
+  let alarm = document.getElementById('alarmSound');
+  alarm.currentTime = 0;
+  alarm.play();
+
+  if (premiumUnlocked) {
+    closureCount++;
+    const closureDuration = Math.floor(Math.random() * 5) + 1;
+    if (closureDuration > longestClosure) longestClosure = closureDuration;
+    const time = new Date().toLocaleTimeString();
+    sessionRecords.push("Eyes closed (" + closureDuration + " sec) at " + time);
+  }
+}
+
+function resumeMonitoring() {
+  showScreen('monitor');
+  document.getElementById('status').innerText = "Eyes Open";
+  document.getElementById('status').style.color = "green";
+
+  let alarm = document.getElementById('alarmSound');
+  alarm.pause();
+  alarm.currentTime = 0;
+}
+
+
 </script>
 
 </body>
